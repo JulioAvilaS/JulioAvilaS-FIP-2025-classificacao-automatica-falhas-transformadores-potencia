@@ -1,0 +1,66 @@
+# Ignorar o ambiente virtual
+venv/
+env/
+ambiente_teste/
+
+# Ignorar arquivos de configuração do Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Ignorar arquivos de cache e logs
+.pytest_cache/
+*.log
+*.sqlite3
+
+# Ignorar arquivos de configuração do IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Ignorar arquivos de dados e modelos grandes
+data/
+*.h5
+*.pt
+*.pth
+*.pkl
+*.pickle
+
+# Ignorar arquivos de notebook temporários
+.ipynb_checkpoints/
+*.ipynb
+
+# Ignorar arquivos de build e distribuição
+build/
+dist/
+*.egg-info/
+*.egg
+*.whl
+
+# Ignorar arquivos de sistema
+.DS_Store
+Thumbs.db
+
+# Ignorar arquivos de configuração do Jupyter
+.jupyter/
+jupyter_notebook_config.py
+
+# Ignorar arquivos de configuração do TensorBoard
+tensorboard/
+logs/
+
+# Ignorar arquivos de configuração do pip
+pip-selfcheck.json
+
+# Ignorar arquivos de configuração do Python
+.python-version
+
+# Ignorar arquivos de configuração do PyCharm
+.idea/
+*.iml
+
+# Ignorar arquivos de configuração do VS Code
+.vscode/
+
+get-pip.py
