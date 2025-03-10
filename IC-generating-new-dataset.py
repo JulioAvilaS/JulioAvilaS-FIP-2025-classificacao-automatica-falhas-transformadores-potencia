@@ -15,29 +15,26 @@ def generate_gas_values_for_case(case):
     elif case == 'T3': 
         return {'C2H2': random.uniform(0, 0.19), 'C2H4': random.uniform(1, 10), 'CH4': random.uniform(1.01, 10), 'H2': random.uniform(1, 10), 'C2H6': random.uniform(4.01, 10)}
 
-def calculate_ratios(gases):
-    ratios = {
-        'C2H2/C2H4': gases['C2H2'] / gases['C2H4'] if gases['C2H4'] != 0 else float('inf'),
-        'CH4/H2': gases['CH4'] / gases['H2'] if gases['H2'] != 0 else float('inf'),
-        'C2H4/C2H6': gases['C2H4'] / gases['C2H6'] if gases['C2H6'] != 0 else float('inf'),
-    }
-    return ratios
+  # def calculate_ratios(gases):
+  # ratios = {
+   #     'C2H2/C2H4': gases['C2H2'] / gases['C2H4'] if gases['C2H4'] != 0 else float('inf'),
+   #     'CH4/H2': gases['CH4'] / gases['H2'] if gases['H2'] != 0 else float('inf'),
+   #     'C2H4/C2H6': gases['C2H4'] / gases['C2H6'] if gases['C2H6'] != 0 else float('inf'),
+  #  }
+   # return ratios
 
 def write_to_csv(results, filename="gas_faults.csv"):
     with open(filename, mode='w', newline='') as file:
         writer = csv.writer(file)
-        writer.writerow(["Caso", "C2H2", "C2H4", "CH4", "H2", "C2H6", "C2H2/C2H4", "CH4/H2", "C2H4/C2H6"])
-        for case, gases, ratios in results:
+        writer.writerow(["Caso", "C2H2", "C2H4", "CH4", "H2", "C2H6"])
+        for case, gases in results:
             writer.writerow([
                 case,
-                f"{gases['C2H2']:.2f}",
-                f"{gases['C2H4']:.2f}",
-                f"{gases['CH4']:.2f}",
-                f"{gases['H2']:.2f}",
-                f"{gases['C2H6']:.2f}",
-                f"{ratios['C2H2/C2H4']:.2f}",
-                f"{ratios['CH4/H2']:.2f}",
-                f"{ratios['C2H4/C2H6']:.2f}"
+                f"{gases['C2H2']:.4f}",
+                f"{gases['C2H4']:.4f}",
+                f"{gases['CH4']:.4f}",
+                f"{gases['H2']:.4f}",
+                f"{gases['C2H6']:.4f}",
             ])
 
 def main():
@@ -56,8 +53,8 @@ def main():
     for case, count in cases_count.items():
         for _ in range(count):
             gases = generate_gas_values_for_case(case)
-            ratios = calculate_ratios(gases)
-            results.append((case, gases, ratios))
+            # ratios = calculate_ratios(gases)
+            results.append((case, gases))
 
     write_to_csv(results)
     print("\nResultados foram salvos no arquivo 'gas_faults.csv'.")
