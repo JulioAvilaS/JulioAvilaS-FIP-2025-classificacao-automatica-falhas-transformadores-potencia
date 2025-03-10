@@ -29,7 +29,7 @@ data/
 
 # Ignorar arquivos de notebook temporários
 .ipynb_checkpoints/
-*.ipynb
+
 
 # Ignorar arquivos de build e distribuição
 build/
