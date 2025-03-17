@@ -56,11 +56,11 @@ def write_labels(filename, result_labels):
             csv_labels.writerow([label])
 
 
-samples_list = read_samples("840-test-dataset/test_samples.csv")
+samples_list = read_samples("1.0-dataset/train_samples.csv")
 i = 1
 result_labels = []
 
-for i in range(len(samples_list) - 1):
+for i in range(len(samples_list)):
     gases_list = get_gases_list(i, samples_list)
 
     set_gas_quantities(gases_list)
@@ -77,11 +77,18 @@ for i in range(len(samples_list) - 1):
 
     pentagon_region = calculate_pentagon_region(centroid_coords, centroid_positions_per_line)    
 
-    result_labels.append(pentagon_region.value)
+    if pentagon_region.value == "PD": result_labels.append(2)
+    elif pentagon_region.value == "D1": result_labels.append(3)
+    elif pentagon_region.value == "D2": result_labels.append(4)
+    elif pentagon_region.value == "T1": result_labels.append(5)
+    elif pentagon_region.value == "T2": result_labels.append(6)
+    elif pentagon_region.value == "T3": result_labels.append(7)
+    elif pentagon_region.value == "S": result_labels.append(1)
+    
 
     i+=1
     
-write_labels("Duval-pentagon-labels/840-database-labels.csv", result_labels)
+write_labels("Duval-pentagon-labels/1.0_dataset_labels.csv", result_labels)
 
 
 
