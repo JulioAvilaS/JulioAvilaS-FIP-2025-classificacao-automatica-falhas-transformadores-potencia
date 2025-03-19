@@ -27,6 +27,11 @@ def get_gases_list(index, list):
         gases_list.append(float(gas))
     return gases_list
 
+def is_notfail():
+    if gas_quantities[Gas.H2] < 100 and gas_quantities[Gas.CH4] < 120 and gas_quantities[Gas.C2H6] < 65 and gas_quantities[Gas.C2H4] < 50 and gas_quantities[Gas.C2H2] < 1:
+       return True
+    return False
+
 def set_gas_quantities(gases_list): # A ordem dos gases no arquivo está diferente da do programa. Por isso a mudança no índices.
    gas_quantities[Gas.C2H2] = gases_list[2]
    gas_quantities[Gas.H2] = gases_list[0]
@@ -56,8 +61,7 @@ def write_labels(filename, result_labels):
             csv_labels.writerow([label])
 
 
-samples_list = read_samples("1.0-dataset/train_samples.csv")
-i = 1
+samples_list = read_samples("Datasets/1.0-dataset/train_samples.csv")
 result_labels = []
 
 for i in range(len(samples_list)):
@@ -65,32 +69,34 @@ for i in range(len(samples_list)):
 
     set_gas_quantities(gases_list)
 
-    gas_percentages = calculate_all_gas_percentage()
+    if is_notfail():
+        result_labels.append(1)
 
-    coordinates_list = calculate_all_coordinates(gas_percentages)
+    else:
+        gas_percentages = calculate_all_gas_percentage()
 
-    polygon_area = calcuate_polygon_area(coordinates_list)
+        coordinates_list = calculate_all_coordinates(gas_percentages)
 
-    centroid_coords = calculate_polygon_centroid_coords(coordinates_list, polygon_area)
+        polygon_area = calcuate_polygon_area(coordinates_list)
 
-    centroid_positions_per_line = calculate_all_centroid_positions_per_line(centroid_coords)
+        centroid_coords = calculate_polygon_centroid_coords(coordinates_list, polygon_area)
 
-    pentagon_region = calculate_pentagon_region(centroid_coords, centroid_positions_per_line)    
+        centroid_positions_per_line = calculate_all_centroid_positions_per_line(centroid_coords)
 
-    if pentagon_region.value == "PD": result_labels.append(2)
-    elif pentagon_region.value == "D1": result_labels.append(3)
-    elif pentagon_region.value == "D2": result_labels.append(4)
-    elif pentagon_region.value == "T1": result_labels.append(5)
-    elif pentagon_region.value == "T2": result_labels.append(6)
-    elif pentagon_region.value == "T3": result_labels.append(7)
-    elif pentagon_region.value == "S": result_labels.append(1)
+        pentagon_region = calculate_pentagon_region(centroid_coords, centroid_positions_per_line)    
+
+        if pentagon_region.value == "PD": result_labels.append(2)
+        elif pentagon_region.value == "D1": result_labels.append(3)
+        elif pentagon_region.value == "D2": result_labels.append(4)
+        elif pentagon_region.value == "T1": result_labels.append(5)
+        elif pentagon_region.value == "T2": result_labels.append(6)
+        elif pentagon_region.value == "T3": result_labels.append(7) 
+        elif pentagon_region.value == "S": result_labels.append(1) 
+
     
+write_labels("Datasets/Duval-pentagon-labels/1.0_dataset_labels.csv", result_labels)
 
-    i+=1
-    
-write_labels("Duval-pentagon-labels/1.0_dataset_labels.csv", result_labels)
-
-
+print(len(result_labels))
 
 
 
