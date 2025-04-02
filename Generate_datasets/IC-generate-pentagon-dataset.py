@@ -1,6 +1,12 @@
 import csv
 import random
 from enum import Enum
+import sys
+import os
+
+project_file = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+sys.path.append(project_file)
+
 from Pentagon_stages.s1_calculate_percentage import calculate_relative_gas_percentage
 from Pentagon_stages.s2_calculate_verticis import Gas, GasPercentage, calculate_polygon_vertices_coords
 from Pentagon_stages.s3_calculate_centroid_area import calcuate_polygon_area, calculate_polygon_centroid_coords
@@ -31,7 +37,7 @@ gas_quantities = {
 samples = []
 labels = []
 
-db_size = 13992
+db_size = 13993
 
 i = 0
 
@@ -46,7 +52,7 @@ def exponencial(min, max, lambda_valor):
             return numero
 
 def midle(min, max, lambda_valor):
-    case = random.randint(0, 250)
+    case = random.randint(0, 150)
     if case == 0:
         return random.uniform(min, max)    
     else:
@@ -93,8 +99,8 @@ def write_labels(filename, result_labels):
         for label in result_labels:
             csv_labels.writerow([label])
 
-i = 0
 
+out_range_gases_count = 0
 while(i < db_size):
     gas_values = randomizer()
     gas_quantities.update(gas_values)  
@@ -112,6 +118,14 @@ while(i < db_size):
     else:
       gas_percentages = calculate_all_gas_percentage()
 
+      if any(value > 40 for value in gas_percentages):
+         out_range_gases_count += 1
+
+    #   while any(value > 40 for value in gas_percentages) or is_notfail():
+    #     gas_values = randomizer()
+    #     gas_quantities.update(gas_values) 
+    #     gas_percentages = calculate_all_gas_percentage()
+
       coordinates_list = calculate_all_coordinates(gas_percentages)
 
       polygon_area = calcuate_polygon_area(coordinates_list)
@@ -123,6 +137,7 @@ while(i < db_size):
       pentagon_region = calculate_pentagon_region(centroid_coords, centroid_positions_per_line)    
 
       if(pentagon_region.name == Failure.PD.name and failure_counters[Failure.PD] < number_of_failures):
+        print(f"Falha PD {gas_percentages} em {i}")
         i += 1
         failure_counters[Failure.PD] +=1
         samples.append((gas_quantities[Gas.H2], gas_quantities[Gas.CH4], gas_quantities[Gas.C2H2], gas_quantities[Gas.C2H4], gas_quantities[Gas.C2H6]))
@@ -158,37 +173,52 @@ while(i < db_size):
         samples.append((gas_quantities[Gas.H2], gas_quantities[Gas.CH4], gas_quantities[Gas.C2H2], gas_quantities[Gas.C2H4], gas_quantities[Gas.C2H6]))
         labels.append(7)  # T3
 
-filename = "Datasets/1.0-dataset/train_samples.csv"
+filename = "C:/ProjetosIC/JulioAvilaS-FIP-2025-classificacao-automatica-falhas-transformadores-potencia/Datasets/2.0-dataset/train_samples.csv"
+
+db_840_min_max_samples = [
+   [92600.0,10200.0,0.001,2.0,1.0],
+   [0.0,18900.0,330.0,540.0,410.0],
+   [8800.0,64064.0,0.001,95650.0,72128.0],
+   [5.26,0.001,66.4,28.2,0.001],
+   [10092.0,5399.0,37565.0,6500.0,530.0],
+   [3417.62,131.42,0.0,1.22,14.36],
+   [134.0,13.0,0.001,0.001,267.0],
+   [7020.0,1850.0,4410.0,2960.0,0.0]
+]
+db_840_min_max_labels = [2,5,7,3,3,2,2,4]
+
+db_ibrahim_min_max_samples = [
+   [92600.0,10200.0,0.001,0.001,0.001],
+   [0.001,0.001,35.0,5.0,10.0],
+   [8800.0,64064.0,0.001,95650.0,72128.0],
+   [20000.0,13000.0,57000.0,29000.0,1850.0],
+   [625.0,130.0,0.0001,2.0,47.0],
+   [0.001,116.0,0.001,0.001,70.0],
+   [0.001,3.4,0.001,54.0,0.001]
+]
+db_ibrahim_min_max_labels = [2,4,7,4,5,5,7]
+
 
 with open(filename, mode='w', newline='') as file:
     writer = csv.writer(file)
     writer.writerow(["h2","ch4","c2h2","c2h4","c2h6"])
-    writer.writerow([92600.0,10200.0,0.001,2.0,1.0])
-    writer.writerow([0.0,18900.0,330.0,540.0,410.0])
-    writer.writerow([8800.0,64064.0,0.001,95650.0,72128.0])
-    writer.writerow([5.26,0.001,66.4,28.2,0.001])
-    writer.writerow([10092.0,5399.0,37565.0,6500.0,530.0])
-    writer.writerow([3417.62,131.42,0.0,1.22,14.36])
-    writer.writerow([134.0,13.0,0.001,0.001,267.0])
-    writer.writerow([7020.0,1850.0,4410.0,2960.0,0.0])
+    for row in db_ibrahim_min_max_samples:
+       writer.writerow(row)
+
     for sample in samples:
         writer.writerow(sample)
 
 
-filename = "Datasets/1.0-dataset/train_labels.csv"
+filename = "C:/ProjetosIC/JulioAvilaS-FIP-2025-classificacao-automatica-falhas-transformadores-potencia/Datasets/2.0-dataset/train_labels.csv"
 
 with open(filename, mode='w', newline='') as file:
     writer = csv.writer(file)
     writer.writerow(['act'])
-    writer.writerow([2])
-    writer.writerow([5])
-    writer.writerow([7])
-    writer.writerow([3])
-    writer.writerow([3])
-    writer.writerow([2])
-    writer.writerow([2])
-    writer.writerow([4])
+    for row in db_ibrahim_min_max_labels:
+       writer.writerow([row])
+
     for label in labels:
         writer.writerow([label])
 
+print(f"{out_range_gases_count} gases com mais de 40%")
 print("Dataset criado com sucesso.")
