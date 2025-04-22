@@ -28,10 +28,10 @@ def generate_concentrations():
     return gases
 
 
-def generate_not_fail_csv_data(lines: int):
-    header = ["h2", "ch4", "c2h2", "c2h4", "c2h6"]
+def generate_not_fail_csv_data(lines: int, failure_number = 0):
+    header = ["h2", "ch4", "c2h2", "c2h4", "c2h6", "act"]
 
-    with open("Datasets/Ibrahim-444-dataset/not_fail.csv", mode="w", newline="") as file:
+    with open("Datasets/Ibrahim-dataset/Entire-dataset/not_fail.csv", mode="w", newline="") as file:
         writer = csv.writer(file)
 
         writer.writerow(header)
@@ -44,7 +44,8 @@ def generate_not_fail_csv_data(lines: int):
                 gases_data["CH4"],
                 gases_data["C2H2"],
                 gases_data["C2H4"],
-                gases_data["C2H6"]
+                gases_data["C2H6"],
+                failure_number
             ])
 
 if __name__ == "__main__":

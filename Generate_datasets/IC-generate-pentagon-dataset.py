@@ -12,7 +12,7 @@ from Pentagon_stages.s2_calculate_verticis import Gas, GasPercentage, calculate_
 from Pentagon_stages.s3_calculate_centroid_area import calcuate_polygon_area, calculate_polygon_centroid_coords
 from Pentagon_stages.s4_calculate_region import calculate_all_centroid_positions_per_line, calculate_pentagon_region, Coordinates
 
-
+#Definição das falhas:
 class Failure(Enum):
     PD = "PD"
     D1 = "D1"
@@ -22,8 +22,10 @@ class Failure(Enum):
     T3 = "T3"
     NF = "NF"
 
+#Inicialização dos contadores para cada falha:
 def inicialize_failures():
     return {failure: 0 for failure in Failure}
+
 
 gas_quantities = {
     Gas.C2H2: 0.001,
@@ -33,7 +35,7 @@ gas_quantities = {
     Gas.C2H4: 0.001,
 }
     
-
+#Definição da quantidade de falhas:
 samples = []
 labels = []
 
@@ -45,12 +47,14 @@ number_of_failures = db_size//7 + 3
 
 failure_counters = inicialize_failures()
 
+#Gera números com a aproximação de 1 de acordo com o lambda_valor:
 def exponencial(min, max, lambda_valor):
     while True:
         numero = random.expovariate(lambda_valor)
         if(min <= numero <= max):
             return numero
 
+#Intercala entre as funções de geração de número de acordo com a probabilidade do case:
 def midle(min, max, lambda_valor):
     case = random.randint(0, 150)
     if case == 0:
@@ -58,7 +62,7 @@ def midle(min, max, lambda_valor):
     else:
         return exponencial(min, max, lambda_valor)
 
-
+#Gera números aleatórios entre o min e o max definidos: 
 def randomizer(decimal_places=3):
     min = 0.001
     max = 10000
@@ -72,12 +76,13 @@ def randomizer(decimal_places=3):
         Gas.C2H4: round(midle(min, max, lambda_valor), decimal_places)
     }
 
+#Verifica se os valores dos gases revelam uma "Não falha":
 def is_notfail():
     return(gas_quantities[Gas.H2] < (100*1.1) and gas_quantities[Gas.CH4] < (120*1.1) and
         gas_quantities[Gas.C2H6] < (65*1.1) and gas_quantities[Gas.C2H4] < (50*1.1) and
         gas_quantities[Gas.C2H2] < (1*1.1))
 
-
+#Calcula o percentual dos gases usando a função de Pentagon_stages:
 def calculate_all_gas_percentage():
     gas_percentages = []
     gases_sum = sum(gas_quantities.values())
@@ -85,6 +90,7 @@ def calculate_all_gas_percentage():
         gas_percentages.append(calculate_relative_gas_percentage(value, gases_sum))
     return gas_percentages
 
+#Calcula a as coordenadas de cada gás e armazena em uma lista:
 def calculate_all_coordinates(gas_percentages):
     coordinates_list = []
     gases = [Gas.C2H2, Gas.H2, Gas.C2H6, Gas.CH4, Gas.C2H4]
@@ -92,15 +98,8 @@ def calculate_all_coordinates(gas_percentages):
         coordinates_list.append(calculate_polygon_vertices_coords(gas, percentage))
     return coordinates_list
 
-def write_labels(filename, result_labels):
-    with open(filename, mode='w', newline='') as file:
-        csv_labels = csv.writer(file)
-        csv_labels.writerow(["act"])
-        for label in result_labels:
-            csv_labels.writerow([label])
-
-
-out_range_gases_count = 0
+#A estrutura de repetição continua gerando gases até que o número de registros para cada falha 
+# seja igual a "number_of_failures":
 while(i < db_size):
     gas_values = randomizer()
     gas_quantities.update(gas_values)  
@@ -118,14 +117,6 @@ while(i < db_size):
     else:
       gas_percentages = calculate_all_gas_percentage()
 
-      if any(value > 40 for value in gas_percentages):
-         out_range_gases_count += 1
-
-    #   while any(value > 40 for value in gas_percentages) or is_notfail():
-    #     gas_values = randomizer()
-    #     gas_quantities.update(gas_values) 
-    #     gas_percentages = calculate_all_gas_percentage()
-
       coordinates_list = calculate_all_coordinates(gas_percentages)
 
       polygon_area = calcuate_polygon_area(coordinates_list)
@@ -136,6 +127,8 @@ while(i < db_size):
 
       pentagon_region = calculate_pentagon_region(centroid_coords, centroid_positions_per_line)    
 
+
+      # Cada condicional verifica se 
       if(pentagon_region.name == Failure.PD.name and failure_counters[Failure.PD] < number_of_failures):
         print(f"Falha PD {gas_percentages} em {i}")
         i += 1
@@ -175,6 +168,7 @@ while(i < db_size):
 
 filename = "C:/ProjetosIC/JulioAvilaS-FIP-2025-classificacao-automatica-falhas-transformadores-potencia/Datasets/2.0-dataset/train_samples.csv"
 
+#Valores mínimos e máximos de cada gas em cada db testado:
 db_840_min_max_samples = [
    [92600.0,10200.0,0.001,2.0,1.0],
    [0.0,18900.0,330.0,540.0,410.0],
@@ -186,7 +180,6 @@ db_840_min_max_samples = [
    [7020.0,1850.0,4410.0,2960.0,0.0]
 ]
 db_840_min_max_labels = [2,5,7,3,3,2,2,4]
-
 db_ibrahim_min_max_samples = [
    [92600.0,10200.0,0.001,0.001,0.001],
    [0.001,0.001,35.0,5.0,10.0],
@@ -198,7 +191,7 @@ db_ibrahim_min_max_samples = [
 ]
 db_ibrahim_min_max_labels = [2,4,7,4,5,5,7]
 
-
+#Escritura das labels e samples em dois arquivos csv separados:
 with open(filename, mode='w', newline='') as file:
     writer = csv.writer(file)
     writer.writerow(["h2","ch4","c2h2","c2h4","c2h6"])
@@ -207,7 +200,6 @@ with open(filename, mode='w', newline='') as file:
 
     for sample in samples:
         writer.writerow(sample)
-
 
 filename = "C:/ProjetosIC/JulioAvilaS-FIP-2025-classificacao-automatica-falhas-transformadores-potencia/Datasets/2.0-dataset/train_labels.csv"
 

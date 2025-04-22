@@ -1,6 +1,9 @@
 import random
 import csv
 
+######Primeiro código utilizado para gerar o 7000-dataset######
+
+
 def generate_gas_values_for_case(case):
     if case == 'PD': 
         return {'C2H2': 0, 'C2H4': random.uniform(1, 10), 'CH4': random.uniform(0, 0.09), 'H2': random.uniform(1, 10), 'C2H6': random.uniform(0, 0.19)}
@@ -15,13 +18,13 @@ def generate_gas_values_for_case(case):
     elif case == 'T3': 
         return {'C2H2': random.uniform(0, 0.19), 'C2H4': random.uniform(1, 10), 'CH4': random.uniform(1.01, 10), 'H2': random.uniform(1, 10), 'C2H6': random.uniform(4.01, 10)}
 
-  # def calculate_ratios(gases):
-  # ratios = {
-   #     'C2H2/C2H4': gases['C2H2'] / gases['C2H4'] if gases['C2H4'] != 0 else float('inf'),
-   #     'CH4/H2': gases['CH4'] / gases['H2'] if gases['H2'] != 0 else float('inf'),
-   #     'C2H4/C2H6': gases['C2H4'] / gases['C2H6'] if gases['C2H6'] != 0 else float('inf'),
-  #  }
-   # return ratios
+#   def calculate_ratios(gases):
+#   ratios = {
+#        'C2H2/C2H4': gases['C2H2'] / gases['C2H4'] if gases['C2H4'] != 0 else float('inf'),
+#        'CH4/H2': gases['CH4'] / gases['H2'] if gases['H2'] != 0 else float('inf'),
+#        'C2H4/C2H6': gases['C2H4'] / gases['C2H6'] if gases['C2H6'] != 0 else float('inf'),
+#    }
+#    return ratios
 
 def write_to_csv(results, filename="gas_faults.csv"):
     with open(filename, mode='w', newline='') as file:
