@@ -1,4 +1,4 @@
-# Projeto de Iniciação Científica — Aprendizado de Máquina e Redes Neurais
+# Classificação automática de falhas em transformadores de potência.
 
 Este repositório contém o pipeline completo de tratamento de dados, análise exploratória, técnicas de balanceamento de classes (SMOTE) e treinamento de arquiteturas de redes neurais. O projeto foi desenvolvido como parte da Iniciação Científica do curso de Sistemas de Informação da Pontifícia Universidade Católica de Minas Gerais (PUC Minas - Campus São Gabriel).
 
